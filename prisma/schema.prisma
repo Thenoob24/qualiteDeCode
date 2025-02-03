@@ -3,11 +3,26 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Type {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+model PokemonCard {
+  id         Int    @id @default(autoincrement())
+  name       String @unique
+  pokedexId  Int    @unique
+  typeId     Int
+  type       Type   @relation(fields: [typeId], references: [id], name: "TypeRelation")
+  lifePoints Int
+  size       Float
+  weight     Float
+  imageUrl   String
 }
+
+model Type {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique
+  pokemonCards PokemonCard[] @relation(name: "TypeRelation")
+}
+
+
