@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import PokemonCardController from '../controllers/PokemonCardController';
+import AuthentificationMiddlewares from '../middlewares/AuthentificationMiddlewares';
 
 class PokemonCardRouter {
   public router: Router;
@@ -12,11 +13,11 @@ class PokemonCardRouter {
   }
 
   private initializeRoutes() {
-    this.router.get(`${this.routeName}`, PokemonCardController.getAllPokemonCards);
-    this.router.get(`${this.routeName}/:pokemonCardId`, PokemonCardController.getPokemonCardById);
-    this.router.post(`${this.routeName}`, PokemonCardController.createPokemonCard);
-    this.router.patch(`${this.routeName}/:pokemonCardId`, PokemonCardController.updatePokemonCard);
-    this.router.delete(`${this.routeName}/:pokemonCardId`, PokemonCardController.deletePokemonCard);
+    this.router.get(`${this.routeName}`, AuthentificationMiddlewares.verifyToken, PokemonCardController.getAllPokemonCards);
+    this.router.get(`${this.routeName}/:pokemonCardId`, AuthentificationMiddlewares.verifyToken, PokemonCardController.getPokemonCardById);
+    this.router.post(`${this.routeName}`, AuthentificationMiddlewares.verifyToken, PokemonCardController.createPokemonCard);
+    this.router.patch(`${this.routeName}/:pokemonCardId`, AuthentificationMiddlewares.verifyToken, PokemonCardController.updatePokemonCard);
+    this.router.delete(`${this.routeName}/:pokemonCardId`, AuthentificationMiddlewares.verifyToken, PokemonCardController.deletePokemonCard);
   }
 }
 

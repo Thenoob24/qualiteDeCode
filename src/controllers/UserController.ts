@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '../client';
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 class UserController
 {
@@ -36,13 +37,21 @@ class UserController
         try {
         const { email, password } = req.body;
         const user = await prisma.user.findUnique({
-            where: { email },
+            where: {
+            email,
+            },
         });
-        if (user && await bcrypt.compare(password, user.password)) {
-            res.status(200).json(user);
-        } else {
-            res.status(401).send('Invalid email or password');
+        if (!user) {
+            res.status(404).send('User not found');
+            return;
         }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            res.status(401).send('Invalid password');
+            return;
+        }
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.status(200).json({ token });
         } catch (error) {
         console.error('Error logging in user:', error);
         res.status(500).send('Internal server error');

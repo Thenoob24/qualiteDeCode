@@ -8,10 +8,10 @@ const port = process.env.PORT || 3000;
 app.use(express.json()); // Ensure this middleware is set up
 
 const pokemonCardRouter = new PokemonCardRouter('/pokemon-cards');
-app.use(pokemonCardRouter.router);
+app.use('/api', pokemonCardRouter.router);
 
 const userRouter = new UserRouter('/users');
-app.use(userRouter.router);
+app.use('/api', userRouter.router);
 
 export const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

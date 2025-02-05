@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import prisma from '../client';
 
 class PokemonCardController {
+  /*
+  * Constructeur
+  */
   constructor() 
   {
     this.getAllPokemonCards = this.getAllPokemonCards.bind(this);
@@ -11,6 +14,9 @@ class PokemonCardController {
     this.deletePokemonCard = this.deletePokemonCard.bind(this);
   }
 
+  /*
+  * Méthodes getAllPokemonCars retourne toutes les données des cartes pokemon
+  */
   public async getAllPokemonCards(req: Request, res: Response) {
     try {
       const pokemons = await prisma.pokemonCard.findMany();
@@ -21,6 +27,9 @@ class PokemonCardController {
     }
   }
 
+  /*
+  * Méthodes getPokemonCardById retourne les données d'une carte pokemon par son ID
+  */
   public async getPokemonCardById(req: Request, res: Response) {
     try {
       const { pokemonCardId } = req.params;
@@ -38,6 +47,9 @@ class PokemonCardController {
     }
   }
 
+  /*
+  * Méthodes createPokemonCard créer une nouvelle carte pokemon
+  */
   public async createPokemonCard(req: Request, res: Response)
    {
     try {
@@ -61,6 +73,9 @@ class PokemonCardController {
     }
   }
 
+  /*
+  * Méthodes updatePokemonCard mettre à jour les données d'une carte pokemon
+  */
   public async updatePokemonCard(req: Request, res: Response) {
     try {
       const { pokemonCardId } = req.params;
@@ -75,7 +90,9 @@ class PokemonCardController {
       res.status(500).send('Internal server error');
     }
   }
-
+/*
+* Méthodes deletePokemonCard supprimer une carte pokemon
+*/
   public async deletePokemonCard(req: Request, res: Response)
 {
     try {
