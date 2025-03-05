@@ -14,6 +14,31 @@ class PokemonCardController {
     this.deletePokemonCard = this.deletePokemonCard.bind(this);
   }
 
+  /**
+   * @swagger
+   * components:
+   *   schemas:
+   *     PokemonCard:
+   *       type: object
+   *       properties:
+   *         id:
+   *           type: integer
+   *         name:
+   *           type: string
+   *         pokedexId:
+   *           type: integer
+   *         typeId:
+   *           type: integer
+   *         lifePoints:
+   *           type: integer
+   *         size:
+   *           type: integer
+   *         weight:
+   *           type: integer
+   *         imageUrl:
+   *           type: string
+   */
+
   /*
   * Méthodes getAllPokemonCars retourne toutes les données des cartes pokemon
   */
@@ -39,7 +64,7 @@ class PokemonCardController {
       if (pokemon) {
         res.status(200).json(pokemon);
       } else {
-        res.status(404).send('Pokemon card not found');
+        res.status(404).send('PokemonCard not found');
       }
     } catch (error) {
       console.error('Error fetching Pokemon card by ID:', error);

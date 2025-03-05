@@ -1,7 +1,7 @@
 import request from 'supertest';
-import { app } from '../src';
+import app from '../src'; // Ensure the app is imported correctly
 import { prismaMock } from './jest.setup';
-import { response } from 'express';
+import { describe, it, expect } from '@jest/globals';
 
 interface Type {
   id: number;
@@ -19,21 +19,25 @@ interface PokemonCard {
   imageUrl: string;
 }
 
+const mockedToken = 'mockedToken';
 
 describe('PokemonCard API', () => {
   describe('GET /pokemon-cards', () => {
     it('should fetch all PokemonCards', async () => {
-      const mockPokemonCards:PokemonCard[] = [];
+      const mockPokemonCards: PokemonCard[] = [];
+      prismaMock.pokemonCard.findMany.mockResolvedValue(mockPokemonCards);
 
-      expect(response.status).toBe(200);
-      const res = await request(app).get('/pokemon-cards');
+      const res = await request(app)
+        .get('/pokemon-cards')
+        .set('Authorization', `Bearer ${mockedToken}`);
       expect(res.status).toBe(200);
       expect(res.body).toEqual(mockPokemonCards);
+    });
   });
 
-  describe('GET /pokemon-cards/:pokemonCardId', async () => {
+  describe('GET /pokemon-cards/:pokemonCardId', () => {
     it('should fetch a PokemonCard by ID', async () => {
-      const mockPokemonCard:PokemonCard = {
+      const mockPokemonCard: PokemonCard = {
         id: 13,
         name: "Bulbizarre",
         pokedexId: 1,
@@ -42,44 +46,89 @@ describe('PokemonCard API', () => {
         size: 7,
         weight: 69,
         imageUrl: "https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_1.png",
-      }
+      };
+      prismaMock.pokemonCard.findUnique.mockResolvedValue(mockPokemonCard);
 
-      const res = await request(app).get('/pokemon-cards/13');
+      const res = await request(app)
+        .get('/pokemon-cards/13')
+        .set('Authorization', `Bearer ${mockedToken}`);
       expect(res.status).toBe(200);
       expect(res.body).toEqual(mockPokemonCard);
     });
 
-      const res = await request(app).get('/pokemon-cards/999');
+    it('should return 404 if PokemonCard not found', async () => {
+      prismaMock.pokemonCard.findUnique.mockResolvedValue(null);
+
+      const res = await request(app)
+        .get('/pokemon-cards/999')
+        .set('Authorization', `Bearer ${mockedToken}`);
       expect(res.status).toBe(404);
-      expect(res.body).toEqual({ error: 'PokemonCard not found' });
     });
   });
 
   describe('POST /pokemon-cards', () => {
     it('should create a new PokemonCard', async () => {
-      const createdPokemonCard = {}; // Define the createdPokemonCard variable
-      const res = await request(app).post('/pokemon-cards').send({});
-      expect(res.status).toBe(201);
-      expect(res.body).toEqual(createdPokemonCard);
+      const createdPokemonCard = {
+        id: 14,
+        name: "Charmander",
+        pokedexId: 4,
+        typeId: 10,
+        lifePoints: 39,
+        size: 6,
+        weight: 85,
+        imageUrl: "https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_4.png",
+      };
+      prismaMock.pokemonCard.create.mockResolvedValue(createdPokemonCard);
+
+      const res = await request(app)
+        .post('/pokemon-cards')
+        .set('Authorization', `Bearer ${mockedToken}`)
+        .send(createdPokemonCard);
       expect(res.status).toBe(201);
       expect(res.body).toEqual(createdPokemonCard);
     });
   });
 
   describe('PATCH /pokemon-cards/:pokemonCardId', () => {
-      const res = await request(app).patch('/pokemon-cards/1').send({});
+    it('should update a PokemonCard', async () => {
+      const updatedPokemonCard = {
+        id: 1,
+        name: "UpdatedName",
+        pokedexId: 1,
+        typeId: 1,
+        lifePoints: 50,
+        size: 10,
+        weight: 100,
+        imageUrl: "https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_1.png",
+      };
+      prismaMock.pokemonCard.update.mockResolvedValue(updatedPokemonCard);
+
+      const res = await request(app)
+        .patch('/pokemon-cards/1')
+        .set('Authorization', `Bearer ${mockedToken}`)
+        .send(updatedPokemonCard);
       expect(res.status).toBe(200);
       expect(res.body).toEqual(updatedPokemonCard);
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(updatedPokemonCard);
     });
-      const res = await request(app).delete('/pokemon-cards/1');
-      expect(res.status).toBe(204);
+  });
 
   describe('DELETE /pokemon-cards/:pokemonCardId', () => {
     it('should delete a PokemonCard', async () => {
-      expect(response.status).toBe(204);
+      prismaMock.pokemonCard.delete.mockResolvedValue({
+        id: 1,
+        name: "DeletedName",
+        pokedexId: 1,
+        typeId: 1,
+        lifePoints: 0,
+        size: 0,
+        weight: 0,
+        imageUrl: "https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_1.png",
+      });
+
+      const res = await request(app)
+        .delete('/pokemon-cards/1')
+        .set('Authorization', `Bearer ${mockedToken}`);
+      expect(res.status).toBe(204);
     });
   });
 });

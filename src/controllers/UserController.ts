@@ -3,39 +3,39 @@ import prisma from '../client';
 const bcrypt = require('bcrypt');
 import jwt, { Secret } from 'jsonwebtoken';
 
-export const login = async function (req: Request, res: Response) {
-  const { email, password } = req.body;
-  const user = await prisma.user.findUnique({
-    where: { email },
-  });
-
-  if (!user) {
-    res.status(404).send('User not found');
-    return;
-  }
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    res.status(401).send('Invalid password');
-    return;
-  }
-  const token = jwt.sign(
-    { userId: user.id }, // Payload
-    process.env.JWT_SECRET as Secret, // Secret
-    { expiresIn: process.env.JWT_EXPIRES_IN } // Expiration
-  );
-  res.status(200).json({
-    token,
-  });
-};
-
 class UserController {
   constructor() {
     this.createUser = this.createUser.bind(this);
   }
 
+  /**
+   * @swagger
+   * components:
+   *   securitySchemes:
+   *     bearerAuth:
+   *       type: http
+   *       scheme: bearer
+   *       bearerFormat: JWT
+   */
+
+  /**
+   * @swagger
+   * components:
+   *   schemas:
+   *     User:
+   *       type: object
+   *       properties:
+   *         id:
+   *           type: integer
+   *         email:
+   *           type: string
+   *         password:
+   *           type: string
+   */
+
   public async createUser(req: Request, res: Response) {
     try {
-      const { name, email, password } = req.body;
+      const { email, password } = req.body;
       console.log('Request body:', req.body);
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -46,9 +46,30 @@ class UserController {
           password: hashedPassword,
         },
       });
-      res.status(201).json(newUser);
+      res.status(201).json({ id: newUser.id, email: newUser.email });
     } catch (error) {
       console.error('Error creating user:', error);
+      res.status(500).send('Internal server error');
+    }
+  }
+
+  public async login(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (user && await bcrypt.compare(password, user.password)) {
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string, {
+          expiresIn: '1d',
+        });
+        res.status(200).json({ token });
+      } else {
+        res.status(401).json({ error: 'Invalid email or password' });
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
       res.status(500).send('Internal server error');
     }
   }
