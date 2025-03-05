@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import UserController from '../controllers/UserController';
+import UserController, { login } from '../controllers/UserController';
+
 class UserRouter {
   public routeName: string;
   public router: Router;
@@ -13,8 +14,9 @@ class UserRouter {
   }
 
   protected initializeRoutes() {
-    this.router.post(`${this.routeName}`, this.controller.createUser);
-    this.router.post(`${this.routeName}/login`, this.controller.loginUser);
+    this.router.post(`${this.routeName}`, this.controller.createUser.bind(this.controller));
+    this.router.post(`${this.routeName}/login`, login.bind(this.controller));
+    this.router.get(`${this.routeName}`, this.controller.getUsers.bind(this.controller));
   }
 }
 

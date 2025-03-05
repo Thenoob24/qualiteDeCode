@@ -54,6 +54,7 @@ class PokemonCardController {
    {
     try {
       const { name, pokedexId, typeId, lifePoints, size, weight, imageUrl } = req.body;
+      const userId = res.locals.userId; // Use the user ID from res.locals
       console.log('Request body:', req.body); // Log the request body to verify the data
       const newPokemonCard = await prisma.pokemonCard.create({
         data: {
