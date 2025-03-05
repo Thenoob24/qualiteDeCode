@@ -4,6 +4,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import PokemonCardRouter from './Routers/PokemonCardRouter';
 import UserRouter from './Routers/UserRouter';
+import AttackCardRouter from './Routers/AttackCardRouter';
 
 dotenv.config(); // Load environment variables
 
@@ -37,6 +38,9 @@ app.use(pokemonCardRouter.router);
 
 const userRouter = new UserRouter('/users');
 app.use(userRouter.router);
+
+const attackCardRouter = new AttackCardRouter('/attack-cards');
+app.use(attackCardRouter.router);
 
 export const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

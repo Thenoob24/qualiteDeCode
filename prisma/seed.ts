@@ -8,6 +8,10 @@ async function main() {
     await prisma.pokemonCard.deleteMany();
     await prisma.$queryRaw`ALTER SEQUENCE "PokemonCard_id_seq" RESTART WITH 1`;
 
+    console.log('Deleting existing attacks...');
+    await prisma.pokemonAttack.deleteMany();
+    await prisma.$queryRaw`ALTER SEQUENCE "PokemonAttack_id_seq" RESTART WITH 1`;
+
     console.log('Deleting existing types...');
     await prisma.type.deleteMany();
     await prisma.$queryRaw`ALTER SEQUENCE "Type_id_seq" RESTART WITH 1`;
@@ -36,6 +40,16 @@ async function main() {
       ],
     });
 
+    console.log('Creating new attacks...');
+    await prisma.pokemonAttack.createMany({
+      data: [
+        { id: 1, name: 'Tackle', damages: 40, typeId: 1 },
+        { id: 2, name: 'Ember', damages: 40, typeId: 2 },
+        { id: 3, name: 'Water Gun', damages: 40, typeId: 3 },
+        { id: 4, name: 'Vine Whip', damages: 45, typeId: 4 },
+      ],
+    });
+
     console.log('Creating new Pokemon cards...');
     await prisma.pokemonCard.createMany({
       data: [
@@ -48,6 +62,7 @@ async function main() {
           weight: 69,
           imageUrl: 'https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_1.png',
           weaknessId: 2, // Fire
+          attackId: 4, // Vine Whip
         },
         {
           name: 'Salameche',
@@ -58,6 +73,7 @@ async function main() {
           weight: 85,
           imageUrl: 'https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_4.png',
           weaknessId: 3, // Water
+          attackId: 2, // Ember
         },
         {
           name: 'Carapuce',
@@ -68,6 +84,7 @@ async function main() {
           weight: 90,
           imageUrl: 'https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_7.png',
           weaknessId: 4, // Grass
+          attackId: 3, // Water Gun
         },
       ],
     });
