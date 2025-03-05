@@ -3,10 +3,7 @@ import app from '../src'; // Ensure the app is imported correctly
 import { prismaMock } from './jest.setup';
 import { describe, it, expect } from '@jest/globals';
 
-interface Type {
-  id: number;
-  name: string;
-}
+
 
 interface PokemonCard {
   id: number;
@@ -17,7 +14,16 @@ interface PokemonCard {
   size: number;
   weight: number;
   imageUrl: string;
-  weaknessId: number;
+  weaknessId: number | null;
+  attackId: number | null;
+  attack: PokemonAttack | null;
+}
+
+interface PokemonAttack {
+  id: number;
+  name: string;
+  damages: number;
+  typeId: number;
 }
 
 const mockedToken = 'mockedToken';
@@ -48,6 +54,13 @@ describe('PokemonCard API', () => {
         weight: 69,
         imageUrl: "https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_1.png",
         weaknessId: 2, // Fire
+        attackId: 1,
+        attack: {
+          id: 1,
+          name: "Vine Whip",
+          damages: 45,
+          typeId: 4
+        }
       };
       prismaMock.pokemonCard.findUnique.mockResolvedValue(mockPokemonCard);
 
@@ -79,7 +92,9 @@ describe('PokemonCard API', () => {
         size: 6,
         weight: 85,
         imageUrl: "https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_4.png",
-        weaknessId: null
+        weaknessId: null,
+        attackId: null,
+        attack: null
       };
       prismaMock.pokemonCard.create.mockResolvedValue(createdPokemonCard);
 
@@ -103,7 +118,9 @@ describe('PokemonCard API', () => {
         size: 10,
         weight: 100,
         imageUrl: "https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_1.png",
-        weaknessId: null
+        weaknessId: null,
+        attackId: null,
+        attack: null
       };
       prismaMock.pokemonCard.update.mockResolvedValue(updatedPokemonCard);
 
@@ -127,7 +144,8 @@ describe('PokemonCard API', () => {
         size: 0,
         weight: 0,
         imageUrl: "https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_1.png",
-        weaknessId: null
+        weaknessId: null,
+        attackId: null
       });
 
       const res = await request(app)

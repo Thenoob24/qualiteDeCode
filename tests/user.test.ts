@@ -35,18 +35,22 @@ describe('User API', () => {
   describe('POST /users/login', () => {
     it('should login a user', async () => {
       const user = {
+        id: 1,
+        email: 'testuser@example.com',
+        password: await bcrypt.hash('password123', 10)
+      };
+      prismaMock.user.findUnique.mockResolvedValue(user);
+
+      const response = await request(app).post('/users/login').send({
         email: 'testuser@example.com',
         password: 'password123'
-      };
+      });
 
-      const response = await request(app).post('/users/login').send(user);
-
-      console.log('User from database:', await prismaMock.user.findUnique); // Debug
+      console.log('User from database:', user); // Debug
       console.log('Response:', response.body); // Debug
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ token: expect.any(String) });
-
     });
   });
 });
