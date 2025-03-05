@@ -10,6 +10,32 @@ class AttackCardController {
     this.deleteAttackCard = this.deleteAttackCard.bind(this);
   }
 
+  /**
+   * @swagger
+   * components:
+   *   schemas:
+   *     Type:
+   *       type: object
+   *       properties:
+   *         id:
+   *           type: integer
+   *         name:
+   *           type: string
+   *     AttackCard:
+   *       type: object
+   *       properties:
+   *         id:
+   *           type: integer
+   *         name:
+   *           type: string
+   *         damages:
+   *           type: integer
+   *         typeId:
+   *           type: integer
+   *         type:
+   *           $ref: '#/components/schemas/Type'
+   */
+
   public async createAttackCard(req: Request, res: Response) {
     try {
       const { name, damages, typeId } = req.body;

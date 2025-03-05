@@ -18,6 +18,13 @@ class PokemonCardController {
    * @swagger
    * components:
    *   schemas:
+   *     Type:
+   *       type: object
+   *       properties:
+   *         id:
+   *           type: integer
+   *         name:
+   *           type: string
    *     PokemonCard:
    *       type: object
    *       properties:
