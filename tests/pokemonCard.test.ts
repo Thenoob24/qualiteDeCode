@@ -17,6 +17,7 @@ interface PokemonCard {
   size: number;
   weight: number;
   imageUrl: string;
+  weaknessId: number;
 }
 
 const mockedToken = 'mockedToken';
@@ -46,6 +47,7 @@ describe('PokemonCard API', () => {
         size: 7,
         weight: 69,
         imageUrl: "https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_1.png",
+        weaknessId: 2, // Fire
       };
       prismaMock.pokemonCard.findUnique.mockResolvedValue(mockPokemonCard);
 
@@ -77,6 +79,7 @@ describe('PokemonCard API', () => {
         size: 6,
         weight: 85,
         imageUrl: "https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_4.png",
+        weaknessId: null
       };
       prismaMock.pokemonCard.create.mockResolvedValue(createdPokemonCard);
 
@@ -100,6 +103,7 @@ describe('PokemonCard API', () => {
         size: 10,
         weight: 100,
         imageUrl: "https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_1.png",
+        weaknessId: null
       };
       prismaMock.pokemonCard.update.mockResolvedValue(updatedPokemonCard);
 
@@ -123,6 +127,7 @@ describe('PokemonCard API', () => {
         size: 0,
         weight: 0,
         imageUrl: "https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_1.png",
+        weaknessId: null
       });
 
       const res = await request(app)

@@ -37,6 +37,10 @@ class PokemonCardController {
    *           type: integer
    *         imageUrl:
    *           type: string
+   *         weaknessId:
+   *           type: integer
+   *         weakness:
+   *           $ref: '#/components/schemas/Type'
    */
 
   /*
@@ -44,7 +48,9 @@ class PokemonCardController {
   */
   public async getAllPokemonCards(req: Request, res: Response) {
     try {
-      const pokemons = await prisma.pokemonCard.findMany();
+      const pokemons = await prisma.pokemonCard.findMany({
+        include: { type: true },
+      });
       res.status(200).json(pokemons);
     } catch (error) {
       console.error('Error fetching all Pokemon cards:', error);
@@ -60,6 +66,7 @@ class PokemonCardController {
       const { pokemonCardId } = req.params;
       const pokemon = await prisma.pokemonCard.findUnique({
         where: { id: Number(pokemonCardId) },
+        include: { type: true, weakness: true },
       });
       if (pokemon) {
         res.status(200).json(pokemon);
@@ -78,7 +85,7 @@ class PokemonCardController {
   public async createPokemonCard(req: Request, res: Response)
    {
     try {
-      const { name, pokedexId, typeId, lifePoints, size, weight, imageUrl } = req.body;
+      const { name, pokedexId, typeId, lifePoints, size, weight, imageUrl, weaknessId } = req.body;
       const userId = res.locals.userId; // Use the user ID from res.locals
       console.log('Request body:', req.body); // Log the request body to verify the data
       const newPokemonCard = await prisma.pokemonCard.create({
@@ -90,6 +97,7 @@ class PokemonCardController {
           size,
           weight,
           imageUrl,
+          weaknessId,
         },
       });
       res.status(201).json(newPokemonCard);

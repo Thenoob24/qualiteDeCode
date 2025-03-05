@@ -4,6 +4,10 @@ const prisma = new PrismaClient();
 
 async function main() {
   try {
+    console.log('Deleting existing Pokemon cards...');
+    await prisma.pokemonCard.deleteMany();
+    await prisma.$queryRaw`ALTER SEQUENCE "PokemonCard_id_seq" RESTART WITH 1`;
+
     console.log('Deleting existing types...');
     await prisma.type.deleteMany();
     await prisma.$queryRaw`ALTER SEQUENCE "Type_id_seq" RESTART WITH 1`;
@@ -43,6 +47,7 @@ async function main() {
           size: 7,
           weight: 69,
           imageUrl: 'https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_1.png',
+          weaknessId: 2, // Fire
         },
         {
           name: 'Salameche',
@@ -52,6 +57,7 @@ async function main() {
           size: 6,
           weight: 85,
           imageUrl: 'https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_4.png',
+          weaknessId: 3, // Water
         },
         {
           name: 'Carapuce',
@@ -61,6 +67,7 @@ async function main() {
           size: 5,
           weight: 90,
           imageUrl: 'https://assets.pokemon.com/assets/cms2/img/cards/web/EX1/EX1_EN_7.png',
+          weaknessId: 4, // Grass
         },
       ],
     });
